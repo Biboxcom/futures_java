@@ -1,11 +1,11 @@
 bibox-futures-client 
 ===========================
-#####简介
+#### 简介
 Bibox平台币本位合约SDK
-#####环境依赖
+#### 环境依赖
 JDK 1.8+
 
-#####使用方法
+#### 使用方法
 
         // 公开的api 获取kline
         BiboxFuturesClient client = new BiboxFuturesClient();
@@ -54,5 +54,5 @@ JDK 1.8+
 
 
 
-#####V1.0.0 版本内容更新
+#### V1.0.0 版本内容更新
 无
