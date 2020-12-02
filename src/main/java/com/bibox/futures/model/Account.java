@@ -22,6 +22,7 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -40,5 +41,14 @@ public class Account {
 
     // 委托保证金
     private BigDecimal orderMargin;
+
+    public static Account parseResult(JSONObject obj) {
+        Account a = new Account();
+        a.setAsset(obj.getString("c"));
+        a.setAvailable(obj.getBigDecimal("b"));
+        a.setOrderMargin(obj.getBigDecimal("f"));
+        a.setPositionMargin(obj.getBigDecimal("m"));
+        return a;
+    }
 
 }

@@ -22,13 +22,20 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.bibox.util.SortedDoubleObjectMap;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class OrderBook {
 
     // 合约名称
@@ -116,6 +123,81 @@ public class OrderBook {
             mLevels = new SortedDoubleObjectMap<>();
         }
 
+    }
+
+    public static OrderBook parseResult(JSONObject obj) {
+        OrderBook a = new OrderBook();
+        a.setSymbol(obj.getString("pair"));
+        a.setUpdateTime(obj.getLong("update_time"));
+        JSONArray bidArr = obj.getJSONArray("bids");
+        JSONArray askArr = obj.getJSONArray("asks");
+        // set bids
+        for (int i = 0; i < bidArr.size(); i++) {
+            JSONObject item = bidArr.getJSONObject(i);
+            a.getBidBook().add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+        }
+        // set asks
+        for (int i = 0; i < askArr.size(); i++) {
+            JSONObject item = askArr.getJSONObject(i);
+            a.getAskBook().add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+        }
+        return a;
+    }
+
+
+    public static void updateFromEvent(OrderBook orderBook, JSONObject obj) {
+        orderBook.setUpdateTime(obj.getLong("update_time"));
+        JSONArray askArr = obj.getJSONObject("add").getJSONArray("asks");
+        if (askArr != null) {
+            for (int i = 0; i < askArr.size(); i++) {
+                JSONObject item = askArr.getJSONObject(i);
+                orderBook.getAskBook().
+                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+            }
+        }
+
+        JSONArray bidArr = obj.getJSONObject("add").getJSONArray("bids");
+        if (bidArr != null) {
+            for (int i = 0; i < bidArr.size(); i++) {
+                JSONObject item = bidArr.getJSONObject(i);
+                orderBook.getBidBook().
+                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+            }
+        }
+
+        askArr = obj.getJSONObject("del").getJSONArray("asks");
+        if (askArr != null) {
+            for (int i = 0; i < askArr.size(); i++) {
+                JSONObject item = askArr.getJSONObject(i);
+                orderBook.getAskBook().remove(item.getBigDecimal("price"));
+            }
+        }
+
+        bidArr = obj.getJSONObject("del").getJSONArray("bids");
+        if (bidArr != null) {
+            for (int i = 0; i < bidArr.size(); i++) {
+                JSONObject item = bidArr.getJSONObject(i);
+                orderBook.getBidBook().remove(item.getBigDecimal("price"));
+            }
+        }
+
+        askArr = obj.getJSONObject("mod").getJSONArray("asks");
+        if (askArr != null) {
+            for (int i = 0; i < askArr.size(); i++) {
+                JSONObject item = askArr.getJSONObject(i);
+                orderBook.getAskBook().
+                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+            }
+        }
+
+        bidArr = obj.getJSONObject("mod").getJSONArray("bids");
+        if (bidArr != null) {
+            for (int i = 0; i < bidArr.size(); i++) {
+                JSONObject item = bidArr.getJSONObject(i);
+                orderBook.getBidBook().
+                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
+            }
+        }
     }
 
 }

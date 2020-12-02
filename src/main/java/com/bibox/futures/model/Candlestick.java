@@ -22,11 +22,17 @@
 
 package com.bibox.futures.model;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Candlestick {
 
     // 时间戳
@@ -46,5 +52,16 @@ public class Candlestick {
 
     // 成交量
     private BigDecimal volume;
+
+    public static Candlestick parseResult(JSONObject obj) {
+        Candlestick a = new Candlestick();
+        a.setTime(obj.getLong("time"));
+        a.setOpen(obj.getBigDecimal("open"));
+        a.setClose(obj.getBigDecimal("close"));
+        a.setHigh(obj.getBigDecimal("high"));
+        a.setLow(obj.getBigDecimal("low"));
+        a.setVolume(obj.getBigDecimal("vol"));
+        return a;
+    }
 
 }

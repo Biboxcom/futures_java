@@ -48,7 +48,7 @@ class TickerSubscription extends Subscription<Ticker> {
 
     @Override
     public Ticker decode(JSONObject json) {
-        return JSONUtils.parseTicker(json.getJSONObject("data"));
+        return JSONUtils.parseTickerEvent(json.getJSONObject("data"));
     }
 
     @Override

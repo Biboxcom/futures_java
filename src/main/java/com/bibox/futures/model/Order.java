@@ -26,31 +26,39 @@ import com.bibox.futures.model.enums.OrderStatus;
 import com.bibox.futures.model.enums.OrderType;
 import com.bibox.futures.model.enums.TradeAction;
 import com.bibox.futures.model.enums.TradeSide;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public abstract class Order {
 
     // 用户自定义id
+    @Setter
     private String clientOrderId;
 
     // 委托id
     private String orderId;
 
     // 委托数量
+    @Setter
     private BigDecimal quantity;
 
     // 开仓,平仓
+    @Setter
     private TradeAction action;
 
     // 多空
+    @Setter
     private TradeSide side;
 
     // 合约名称
+    @Setter
     private String symbol;
 
     // 委托保证金

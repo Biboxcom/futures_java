@@ -22,11 +22,17 @@
 
 package com.bibox.futures.model;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Ticker {
 
     // 合约名称
@@ -67,5 +73,23 @@ public class Ticker {
 
     // 24小时涨幅
     private String change;
+
+    public static Ticker parseEvent(JSONObject obj) {
+        Ticker a = new Ticker();
+        a.setSymbol(obj.getString("pair"));
+        a.setChange(obj.getString("percent"));
+        a.setTime(obj.getLong("timestamp"));
+        a.setVolume(obj.getBigDecimal("vol"));
+        a.setPrice(obj.getBigDecimal("last"));
+        a.setPriceInCNY(obj.getBigDecimal("base_last_cny"));
+        a.setPriceInUSD(obj.getBigDecimal("last_usd"));
+        a.setHigh(obj.getBigDecimal("high"));
+        a.setLow(obj.getBigDecimal("low"));
+        a.setBestAskPrice(obj.getBigDecimal("sell"));
+        a.setBestAskQty(obj.getBigDecimal("sell_amount"));
+        a.setBestBidPrice(obj.getBigDecimal("buy"));
+        a.setBestBidQty(obj.getBigDecimal("buy_amount"));
+        return a;
+    }
 
 }

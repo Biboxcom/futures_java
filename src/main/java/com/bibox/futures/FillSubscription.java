@@ -45,7 +45,7 @@ class FillSubscription extends PrivateSubscription<List<Fill>> {
     @Override
     public List<Fill> doDecode(JSONObject json) {
         List<Fill> a = new ArrayList<>();
-        a.add(JSONUtils.parseFill(json));
+        a.add(JSONUtils.parseFillEvent(json));
         return a;
     }
 

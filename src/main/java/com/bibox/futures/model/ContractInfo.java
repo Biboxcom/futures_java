@@ -22,11 +22,14 @@
 
 package com.bibox.futures.model;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class ContractInfo {
 
     // 合约名称
@@ -43,5 +46,18 @@ public class ContractInfo {
 
     // 时间
     private long time;
+
+    public static void wrapper(ContractInfo contractInfo,BigDecimal fundingRate){
+        contractInfo.fundingRate = fundingRate;
+    }
+
+    public static ContractInfo parseResult(JSONObject obj) {
+        ContractInfo a = new ContractInfo();
+        a.setSymbol(obj.getString("symbol"));
+        a.setIndexPrice(obj.getBigDecimal("close"));
+        a.setMarkPrice(obj.getBigDecimal("priceTag"));
+        a.setTime(obj.getTimestamp("createdAt").getTime());
+        return a;
+    }
 
 }

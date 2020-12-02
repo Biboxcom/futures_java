@@ -56,80 +56,10 @@ class OrderBookSubscription extends Subscription<OrderBook> {
         JSONObject obj = JSON.parseObject(data);
 
         if (!obj.containsKey("add")) {
-            orderBook = new OrderBook();
-            orderBook.setSymbol(obj.getString("pair"));
-            orderBook.setUpdateTime(obj.getLong("update_time"));
-            JSONArray bidArr = obj.getJSONArray("bids");
-            JSONArray askArr = obj.getJSONArray("asks");
-            // set bids
-            for (int i = 0; i < bidArr.size(); i++) {
-                JSONObject item = bidArr.getJSONObject(i);
-                orderBook.getBidBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
-            // set asks
-            for (int i = 0; i < askArr.size(); i++) {
-                JSONObject item = askArr.getJSONObject(i);
-                orderBook.getAskBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
+            orderBook = OrderBook.parseResult(obj);
             return orderBook;
         }
-
-        orderBook.setUpdateTime(obj.getLong("update_time"));
-        JSONArray askArr = obj.getJSONObject("add").getJSONArray("asks");
-        if (askArr != null) {
-            for (int i = 0; i < askArr.size(); i++) {
-                JSONObject item = askArr.getJSONObject(i);
-                orderBook.getAskBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
-        }
-
-        JSONArray bidArr = obj.getJSONObject("add").getJSONArray("bids");
-        if (bidArr != null) {
-            for (int i = 0; i < bidArr.size(); i++) {
-                JSONObject item = bidArr.getJSONObject(i);
-                orderBook.getBidBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
-        }
-
-        askArr = obj.getJSONObject("del").getJSONArray("asks");
-        if (askArr != null) {
-            for (int i = 0; i < askArr.size(); i++) {
-                JSONObject item = askArr.getJSONObject(i);
-                orderBook.getAskBook().remove(item.getBigDecimal("price"));
-            }
-        }
-
-        bidArr = obj.getJSONObject("del").getJSONArray("bids");
-        if (bidArr != null) {
-            for (int i = 0; i < bidArr.size(); i++) {
-                JSONObject item = bidArr.getJSONObject(i);
-                orderBook.getBidBook().remove(item.getBigDecimal("price"));
-            }
-        }
-
-        askArr = obj.getJSONObject("mod").getJSONArray("asks");
-        if (askArr != null) {
-            for (int i = 0; i < askArr.size(); i++) {
-                JSONObject item = askArr.getJSONObject(i);
-                orderBook.getAskBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
-        }
-
-        bidArr = obj.getJSONObject("mod").getJSONArray("bids");
-        if (bidArr != null) {
-            for (int i = 0; i < bidArr.size(); i++) {
-                JSONObject item = bidArr.getJSONObject(i);
-                orderBook.getBidBook().
-                        add(item.getBigDecimal("price"), item.getBigDecimal("volume"));
-            }
-        }
-
-
+        OrderBook.updateFromEvent(orderBook, obj);
         return orderBook;
     }
 

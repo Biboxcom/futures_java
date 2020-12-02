@@ -22,12 +22,18 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bibox.futures.model.enums.TradeSide;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Trade {
 
     // 合约名称
@@ -44,5 +50,16 @@ public class Trade {
 
     // 多空
     private TradeSide side;
+
+    public static Trade parseEvent(JSONObject obj) {
+        Trade a = new Trade();
+        a.setSymbol(obj.getString("pair"));
+        Integer side = obj.getInteger("side");
+        a.setSide(TradeSide.fromSide(side));
+        a.setPrice(obj.getBigDecimal("price"));
+        a.setQuantity(obj.getBigDecimal("amount"));
+        a.setTime(obj.getLong("time"));
+        return a;
+    }
 
 }

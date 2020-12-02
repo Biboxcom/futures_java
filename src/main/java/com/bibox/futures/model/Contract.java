@@ -22,11 +22,15 @@
 
 package com.bibox.futures.model;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Contract {
 
     // 合约名称
@@ -61,5 +65,25 @@ public class Contract {
 
     // 资金汇率
     private BigDecimal fundingRate;
+
+    public static void wrapper(Contract contract, BigDecimal fundingRate, BigDecimal priceIncrement) {
+        contract.fundingRate = fundingRate;
+        contract.priceIncrement = priceIncrement;
+    }
+
+    public static Contract parseResult(JSONObject obj) {
+        Contract a = new Contract();
+        a.setSymbol(obj.getString("pair"));
+        a.setUnit(obj.getBigDecimal("value"));
+        a.setRiskLimitBase(obj.getBigDecimal("risk_level_base"));
+        a.setRiskLimitStep(obj.getBigDecimal("risk_level_dx"));
+        a.setActiveOrderLimit(obj.getInteger("pending_max"));
+        a.setPositionSizeLimit(obj.getBigDecimal("hold_max")
+                .divide(obj.getBigDecimal("value"), RoundingMode.HALF_DOWN));
+        a.setLeverageLimit(obj.getBigDecimal("leverage_max"));
+        a.setMakerFee(obj.getBigDecimal("maker_fee"));
+        a.setTakerFee(obj.getBigDecimal("taker_fee"));
+        return a;
+    }
 
 }

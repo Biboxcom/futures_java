@@ -22,13 +22,19 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bibox.futures.model.enums.MarginMode;
 import com.bibox.futures.model.enums.TradeSide;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Position {
 
     // 合约名称
@@ -63,5 +69,25 @@ public class Position {
 
     // 用户 id
     private String userId;
+
+    public static void wrapper(Position position, BigDecimal unit) {
+        position.currentQty = position.getCurrentQty().divide(unit, BigDecimal.ROUND_DOWN);
+    }
+
+    public static Position parseResult(JSONObject obj) {
+        Position a = new Position();
+        a.setSymbol(obj.getString("pi"));
+        a.setPositionMargin(obj.getBigDecimal("mg"));
+        a.setMarginCallPrice(obj.getBigDecimal("pa"));
+        a.setLiquidationPrice(obj.getBigDecimal("pf"));
+        a.setMarginMode(MarginMode.fromInteger(obj.getInteger("md")));
+        a.setSide(TradeSide.fromInteger(obj.getInteger("sd")));
+        a.setLeverage(obj.getInteger("l"));
+        a.setEntryPrice(obj.getBigDecimal("po"));
+        a.setCurrentQty(obj.getBigDecimal("hc"));
+        a.setReducibleQty(obj.getBigDecimal("lc"));
+        a.setUserId(obj.getString("ui"));
+        return a;
+    }
 
 }

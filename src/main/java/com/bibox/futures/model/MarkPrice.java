@@ -22,11 +22,17 @@
 
 package com.bibox.futures.model;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class MarkPrice {
 
     // 时间戳
@@ -43,5 +49,15 @@ public class MarkPrice {
 
     // 收盘价
     private BigDecimal close;
+
+    public static MarkPrice parseResult(JSONObject obj) {
+        MarkPrice a = new MarkPrice();
+        a.setTime(obj.getLong("time"));
+        a.setOpen(obj.getBigDecimal("open"));
+        a.setClose(obj.getBigDecimal("close"));
+        a.setHigh(obj.getBigDecimal("high"));
+        a.setLow(obj.getBigDecimal("low"));
+        return a;
+    }
 
 }

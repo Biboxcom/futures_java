@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Slf4j
 abstract class BiboxFuturesClientBase {
@@ -425,27 +426,24 @@ abstract class BiboxFuturesClientBase {
                         newQuery()));
         HashMap<String, BigDecimal> fundingRates =
                 JSONUtils.parseFundingRates(HttpUtils.doGet(rest(URL_FUNDING_RATE), newQuery()));
-        contracts.forEach(item -> {
-            item.setFundingRate(fundingRates.get(item.getSymbol()));
-            item.setPriceIncrement(symbolPrecisions.get(item.getSymbol()));
-        });
+        contracts.forEach(item -> Contract.wrapper(item,fundingRates.get(item.getSymbol()),
+                symbolPrecisions.get(item.getSymbol())));
         return contracts;
     }
 
     protected List<Position> positionsWrapper(List<Position> positions) throws Throwable {
         HashMap<String, BigDecimal> units =
                 JSONUtils.parseUnits(HttpUtils.doGet(rest(URL_CONTRACT), newQuery()));
-        positions.forEach(item -> item.setCurrentQty(item.getCurrentQty().
-                divide(units.get(item.getSymbol()), BigDecimal.ROUND_DOWN)));
+        positions.forEach(item->Position.wrapper(item,units.get(item.getSymbol())));
         return positions;
     }
 
     protected List<ContractInfo> contractInfosWrapper(
-            List<ContractInfo> contractInfo) throws Throwable {
+            List<ContractInfo> contractInfos) throws Throwable {
         HashMap<String, BigDecimal> fundingRates =
                 JSONUtils.parseFundingRates(HttpUtils.doGet(rest(URL_FUNDING_RATE), newQuery()));
-        contractInfo.forEach(item -> item.setFundingRate(fundingRates.get(item.getSymbol())));
-        return contractInfo;
+        contractInfos.forEach(item -> ContractInfo.wrapper(item, fundingRates.get(item.getSymbol())));
+        return contractInfos;
     }
 
 }

@@ -22,15 +22,19 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bibox.futures.model.enums.MarginMode;
 import com.bibox.futures.model.enums.PositionUpdateType;
 import com.bibox.futures.model.enums.TradeSide;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public class PositionUpdate {
 
@@ -72,5 +76,41 @@ public class PositionUpdate {
 
     // 手续费
     private Fee fee;
+
+    public static PositionUpdate parseResult(JSONObject obj) {
+        PositionUpdate a = new PositionUpdate();
+        a.setId(obj.getString("id"));
+        a.setSymbol(obj.getString("pair"));
+        a.setSide(TradeSide.fromInteger(obj.getInteger("side")));
+        a.setMarginMode(MarginMode.fromInteger(obj.getInteger("model")));
+        a.setType(PositionUpdateType.fromInteger(obj.getInteger("log_type")));
+        a.setChange(obj.getBigDecimal("hold_coin_dx"));
+        a.setCurrentQty(obj.getBigDecimal("hold_coin"));
+        a.setPrice(obj.getBigDecimal("price_log"));
+        a.setEntryPrice(obj.getBigDecimal("price_open"));
+        a.setProfit(obj.getBigDecimal("profit"));
+        Fee fee = new Fee();
+        fee.setValue(obj.getBigDecimal("fee"));
+        fee.setInBIX(obj.getBigDecimal("fee_bix"));
+        fee.setInCoupon(obj.getBigDecimal("fee_bix0"));
+        a.setFee(fee);
+        a.setTime(obj.getTimestamp("createdAt").getTime());
+        a.setUserId(obj.getString("user_id"));
+        return a;
+    }
+
+    public static PositionUpdate parseEvent(JSONObject obj) {
+        PositionUpdate a = new PositionUpdate();
+        a.setId(obj.getString("id"));
+        a.setUserId(obj.getString("user_id"));
+        a.setType(PositionUpdateType.fromInteger(obj.getInteger("type")));
+        a.setMarginMode(MarginMode.fromInteger(obj.getInteger("mode")));
+        a.setSymbol(obj.getString("pair"));
+        a.setPrice(obj.getBigDecimal("price"));
+        a.setChange(obj.getBigDecimal("hold_dx"));
+        a.setSide(TradeSide.fromInteger(obj.getInteger("order_side")));
+        a.setTime(obj.getLong("time"));
+        return a;
+    }
 
 }
