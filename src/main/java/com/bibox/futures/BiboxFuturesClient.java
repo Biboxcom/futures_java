@@ -30,6 +30,7 @@ import com.bibox.util.Listener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -315,7 +316,7 @@ public class BiboxFuturesClient extends BiboxFuturesClientBase {
         Optional.ofNullable(query.getSymbol())
                 .ifPresent(item -> json.put("pair", item));
         Optional.ofNullable(query.getStatus())
-                .ifPresent(item -> json.put("pair", item.getValue()));
+                .ifPresent(item -> json.put("status", Arrays.asList(item.getValue())));
         Optional.ofNullable(ApiOrderSide.lookupOrderSide(
                 query.getSide(), query.getAction()))
                 .ifPresent(item -> json.put("side", item.getValue()));

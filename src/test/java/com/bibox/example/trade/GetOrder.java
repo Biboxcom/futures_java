@@ -5,7 +5,6 @@ import com.bibox.futures.OrderIdSet;
 import com.bibox.futures.OrderQuery;
 import com.bibox.futures.Pager;
 import com.bibox.futures.model.Order;
-import com.bibox.futures.model.enums.TradeAction;
 
 import java.util.List;
 
@@ -23,10 +22,12 @@ public class GetOrder {
 
     private static void getOrdersByPage(BiboxFuturesClient client) throws Throwable {
         OrderQuery query = new OrderQuery();
+        // you can set page,size,orderStatus ...
         query.setPage(1);
-        query.setSize(2);
-        query.setAction(TradeAction.ENTRY);
-        // you can set page ,size,orderStatus ...
+        query.setSize(10);
+        // query.setAction(TradeAction.ENTRY);
+        // query.setSide(TradeSide.LONG);
+        // query.setStatus(OrderStatus.CANCELED);
         Pager<Order> ordersByPage = client.getOrders(query);
         System.out.println(ordersByPage);
         System.out.println(ordersByPage.getItems().size());
