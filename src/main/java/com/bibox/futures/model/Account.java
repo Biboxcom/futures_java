@@ -23,11 +23,16 @@
 package com.bibox.futures.model;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter(value = AccessLevel.PROTECTED)
+@ToString
 public class Account {
 
     // 资产名称
