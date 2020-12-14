@@ -19,7 +19,7 @@
 ## Usage
 
 ```sh
- // 公开的api 获取kline
+        // 公开的api 获取kline
         BiboxFuturesClient client = new BiboxFuturesClient();
         List<Candlestick> res = client.getCandlestick("5BTC_USD", CandlestickInterval.WEEKLY,10);
         System.out.println(res);
