@@ -1,13 +1,19 @@
-bibox-futures-client 
-===========================
-#### 简介
-Bibox平台币本位合约SDK
-#### 环境依赖
-JDK 1.8+
+<h1 align="center">Welcome to Bibox Futures Client 👋</h1>
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-v1.0.0-blue.svg?cacheSeconds=2592000" />
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+</p>
 
-#### 使用方法
+> Bibox平台币本位合约Java版本SDK
 
-        // 公开的api 获取kline
+### 🏠 [Homepage](https://futures.bibox.me/zh/futures)
+
+## Usage
+
+```sh
+ // 公开的api 获取kline
         BiboxFuturesClient client = new BiboxFuturesClient();
         List<Candlestick> res = client.getCandlestick("5BTC_USD", CandlestickInterval.WEEKLY,10);
         System.out.println(res);
@@ -49,10 +55,23 @@ JDK 1.8+
         });
         
         // 更多的可以参考测试用例
+```
+
+## Run tests
+
+```sh
+直接运行 src/test/java/com.bibox.example
+```
+
+## Author
+
+👤 **Biboxcom**
+
+* Website: https://github.com/Biboxcom
+* Github: [@Biboxcom](https://github.com/Biboxcom)
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
 
 
-
-
-
-#### V1.0.0 版本内容更新
-无
