@@ -10,6 +10,12 @@
 
 ### 🏠 [Homepage](https://futures.bibox.me/zh/futures)
 
+## Dependency
+
+```sh
+需要 jdk1.8+
+```
+
 ## Usage
 
 ```sh
@@ -55,12 +61,6 @@
         });
         
         // 更多的可以参考测试用例
-```
-
-## Run tests
-
-```sh
-直接运行 src/test/java/com.bibox.example
 ```
 
 ## Author
