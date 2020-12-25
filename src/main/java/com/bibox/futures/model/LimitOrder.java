@@ -73,28 +73,7 @@ public class LimitOrder extends Order {
     }
 
     public static LimitOrder parseResult2(JSONObject obj) {
-        LimitOrder a = new LimitOrder();
-        Integer side = obj.getInteger("sd");
-        a.setAction(TradeAction.fromSide(side));
-        a.setSide(TradeSide.fromSide(side));
-        a.setOrderId(obj.getString("oi"));
-        a.setSymbol(obj.getString("pi"));
-        a.setPrice(obj.getBigDecimal("p"));
-        a.setQuantity(obj.getBigDecimal("q"));
-        a.setOrderMargin(obj.getBigDecimal("fz"));
-        a.setAvgPrice(obj.getBigDecimal("dp"));
-        a.setExecutedQty(obj.getBigDecimal("eq"));
-        a.setFailReason(obj.getInteger("r"));
-        Fee fee = new Fee();
-        fee.setValue(obj.getBigDecimal("f"));
-        fee.setInBIX(obj.getBigDecimal("fb"));
-        fee.setInCoupon(obj.getBigDecimal("fb0"));
-        a.setFee(fee);
-        a.setStatus(OrderStatus.fromInteger(obj.getInteger("s")));
-        a.setClientOrderId(obj.getString("coi"));
-        a.setCreateTime(obj.getLong("t"));
-        a.setUserId(obj.getString("ui"));
-        return a;
+        return parseEvent(obj);
     }
 
     public static LimitOrder parseEvent(JSONObject obj){

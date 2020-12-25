@@ -16,10 +16,10 @@ public class GetOrder {
         String apiKey = "5d965851a2d885c2c837a33f8e2fea39cfb17399";
         String secretKey = "2c9dfe3cbe55fb139c68df741165b50eef1cc3a3";
         BiboxFuturesClient client = new BiboxFuturesClient(apiKey, secretKey);
-//        getOneOrder(client);
-//        getOrders(client);
+        getOneOrder(client);
+        getOrders(client);
         getOpenOrders(client);
-//        getCloseOrders(client);
+        getCloseOrders(client);
 
     }
 
