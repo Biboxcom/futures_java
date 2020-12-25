@@ -60,6 +60,7 @@ abstract class BiboxFuturesClientBase {
     public static final String URL_TRANSFER = "/v3/assets/transfer/cbc";
     public static final String URL_PLACE_ORDER = "/v3/cbc/order/open";
     public static final String URL_CANCEL_ORDER = "/v3/cbc/order/close";
+    public static final String URL_QUERY_OPEN_ORDER = "/v3/cbc/order/list";
     public static final String URL_QUERY_ORDER = "/v3.1/cquery/base_coin/orderById";
     public static final String URL_QUERY_ORDER_HISTORY = "/v3.1/cquery/base_coin/orderHistory";
     public static final String URL_CANCEL_ORDERS = "/v3/cbc/order/closeBatch";

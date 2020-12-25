@@ -28,6 +28,7 @@ import com.bibox.futures.model.enums.*;
 import com.bibox.util.HttpUtils;
 import com.bibox.util.Listener;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -270,6 +271,25 @@ public class BiboxFuturesClient extends BiboxFuturesClientBase {
     }
 
     /**
+     * 获取符合指定 OrderQuery 条件的当前委托
+     */
+    public Pager<Order> getOpenOrders(OrderQuery query) throws Throwable {
+        // this method will ignore the query's status
+        JSONObject json = new JSONObject();
+        Integer page = Optional.ofNullable(query.getPage()).orElse(1);
+        Integer size = Optional.ofNullable(query.getSize()).orElse(10);
+        json.put("page", page);
+        json.put("size", size);
+        Optional.ofNullable(query.getSymbol())
+                .ifPresent(item -> json.put("pair", convertSymbol(item)));
+        Optional.ofNullable(ApiOrderSide.lookupOrderSide(
+                query.getSide(), query.getAction()))
+                .ifPresent(item -> json.put("order_side", item.getValue()));
+
+        return JSONUtils.parseOpenOrders(doPost(URL_QUERY_OPEN_ORDER, json.toJSONString()));
+    }
+
+    /**
      * 获取指定 orderId 的委托
      */
     public Order getOrder(String orderId) throws Throwable {
@@ -305,7 +325,7 @@ public class BiboxFuturesClient extends BiboxFuturesClientBase {
     }
 
     /**
-     * 获取符合指定 OrderQuery 条件的全部委托
+     * 获取符合指定 OrderQuery 条件的历史委托
      */
     public Pager<Order> getOrders(OrderQuery query) throws Throwable {
         JSONObject json = new JSONObject();
@@ -314,7 +334,7 @@ public class BiboxFuturesClient extends BiboxFuturesClientBase {
         json.put("page", page);
         json.put("size", size);
         Optional.ofNullable(query.getSymbol())
-                .ifPresent(item -> json.put("pair", item));
+                .ifPresent(item -> json.put("pair", convertSymbol(item)));
         Optional.ofNullable(query.getStatus())
                 .ifPresent(item -> json.put("status", Arrays.asList(item.getValue())));
         Optional.ofNullable(ApiOrderSide.lookupOrderSide(

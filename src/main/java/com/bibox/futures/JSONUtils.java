@@ -243,6 +243,22 @@ class JSONUtils {
         return pager;
     }
 
+    public static Pager<Order> parseOpenOrders(String text) throws Throwable {
+        Pager<Order> pager = new Pager<>();
+
+        JSONObject json = parseObject(text, "result");
+        pager.setCount(json.getInteger("t"));
+        pager.setPage(json.getInteger("p"));
+
+        JSONArray arr = parseArray(json.getString("o"));
+        ArrayList<Order> list = new ArrayList<>();
+        for (int i = 0; i < arr.size(); i++) {
+            list.add(LimitOrder.parseResult2(arr.getJSONObject(i)));
+        }
+        pager.setItems(list);
+        return pager;
+    }
+
     public static List<Order> parseOrders(String text) throws Throwable {
         JSONArray arr = parseArray(text, "result");
         ArrayList<Order> list = new ArrayList<>();
