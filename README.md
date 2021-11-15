@@ -19,6 +19,8 @@
 ## Usage
 
 ```sh
+// 如果出现网络问题,你可能需要代理或者重设client的相关地址参数
+
 // 公开的api 获取kline
 BiboxFuturesClient client = new BiboxFuturesClient();
 List<Candlestick> res = client.getCandlestick("5BTC_USD", CandlestickInterval.WEEKLY,10);
