@@ -41,7 +41,7 @@ class MarketPriceSubscription extends Subscription<List<MarkPrice>> {
     }
 
     static String buildChannelName(String symbol) {
-        return String.format("bibox_sub_spot_%sTAGPRICE_kline_1min",
+        return String.format("%sTAGPRICE_kline_1min",
                 SymbolConverter.convert(symbol));
     }
 
@@ -52,7 +52,7 @@ class MarketPriceSubscription extends Subscription<List<MarkPrice>> {
 
     @Override
     public List<MarkPrice> decode(JSONObject json) {
-        return JSONUtils.parseMarketPrice(json.getJSONArray("data"));
+        return JSONUtils.parseMarketPriceNew(json.getJSONArray("d"));
     }
 
     @Override
@@ -70,10 +70,7 @@ class MarketPriceSubscription extends Subscription<List<MarkPrice>> {
     @Override
     public String toString() {
         JSONObject json = new JSONObject();
-        json.put("event", "addChannel");
-        json.put("channel", getChannel());
-        json.put("binary", 0);
-        json.put("ver", 8);
+        json.put("sub", getChannel());
         return json.toJSONString();
     }
 

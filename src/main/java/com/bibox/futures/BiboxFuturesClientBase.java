@@ -41,8 +41,8 @@ import java.util.concurrent.Executors;
 @Slf4j
 abstract class BiboxFuturesClientBase {
 
-    public String restHost = "https://api.bibox666.com";
-    public String urlWss = "wss://mopush.bibox360.com/cbc";
+    public String restHost = "https://api.bibox.com";
+    public String urlWss = "wss://npush.bibox360.com/cbc";
 
     public void setRestHost(String restHost) {
         this.restHost = restHost;
@@ -155,6 +155,12 @@ abstract class BiboxFuturesClientBase {
         });
     }
 
+    private void sendPing() {
+        JSONObject json = new JSONObject();
+        json.put("ping", System.currentTimeMillis()/1000);
+        sendMessage(json.toJSONString());
+    }
+
     private void sendPong(long id) {
         JSONObject json = new JSONObject();
         json.put("pong", id);
@@ -171,8 +177,7 @@ abstract class BiboxFuturesClientBase {
 
     void sendUnsubscribeMessage(String channel) {
         JSONObject json = new JSONObject();
-        json.put("channel", channel);
-        json.put("event", "removeChannel");
+        json.put("unsub", channel);
         sendMessage(json.toJSONString());
     }
 
@@ -231,7 +236,11 @@ abstract class BiboxFuturesClientBase {
                         }
 
                         @Override
-                        public void onMessage(HttpUtils.WebSocket socket, String text) {
+                        public void onMessage(HttpUtils.WebSocket socket, byte[] bytes) {
+                            String text = UncompressUtils.decodeBytes(bytes);
+                            if (text == null) {
+                                return;
+                            }
                             messageHandler.post(() -> onWebSocketMessage(text));
                         }
 
@@ -262,34 +271,26 @@ abstract class BiboxFuturesClientBase {
 
         if (!isArrMsg(text)) {
             // Ping
-            long pingId = JSONUtils.parsePing(JSON.parseObject(text));
+            JSONObject json = JSON.parseObject(text);
+            long pingId = JSONUtils.parsePing(json);
             if (pingId >= 0) {
                 log.info("ping [{}]", pingId);
                 sendPong(pingId);
                 return;
             }
-            log.warn(text);
-            return;
-        }
-
-        // sub msg
-        JSONArray a = JSON.parseArray(text);
-        for (int i = 0; i < a.size(); i++) {
-            JSONObject json = a.getJSONObject(i);
-
-            String channel = json.getString("channel");
+            // sub msg
+            String channel = json.getString("topic");
             if (StringUtils.isEmpty(channel)) {
-                continue;
+                return;
             }
-
             if (PrivateSubscription.CHANNEL_PREFIX.equals(channel)) {
-                JSONObject data = json.getJSONObject("data");
+                JSONObject data = json.getJSONObject("d");
                 for (PrivateSubscription sub : privateSubscriptions.values()) {
                     if (data.containsKey(sub.getDataName())) {
                         sub.onMessage(data);
                     }
                 }
-                continue;
+                return;
             }
 
             Subscription sub = subscriptions.get(channel);
@@ -297,6 +298,7 @@ abstract class BiboxFuturesClientBase {
                 sub.onMessage(json);
             }
         }
+
     }
 
     private void onWebSocketFailure(Throwable error) {
@@ -321,25 +323,32 @@ abstract class BiboxFuturesClientBase {
         // 为稍后重连创建计划任务
         messageHandler.postDelayed(mScheduledReconnect = () -> {
             mScheduledReconnect = null;
-            reconnectWebSocket();
-        }, 60_000);
+            try {
+                sendPing();
+            }catch (Exception e) {
+                reconnectWebSocket();
+            }
+        }, 30_000);
     }
 
     private void reconnectWebSocket() {
         if (webSocket != null) {
-            webSocket.close();
+            try {
+                webSocket.close();
+            }catch (Exception e){
+                // 关闭失败
+                log.warn(e.getMessage());
+            }
             webSocket = null;
             connectWebSocket();
         }
     }
 
     protected String buildSignature() {
-        JSONObject json = new JSONObject();
-        json.put("apikey", apiKey);
-        json.put("channel", PrivateSubscription.CHANNEL_PREFIX);
-        json.put("event", "addChannel");
+        String oriStr = String.format("{\"apikey\":\"%s\",\"sub\":\"%s\"}",
+                apiKey, PrivateSubscription.CHANNEL_PREFIX);
         return Hex.encodeHexString(MacUtils.buildMAC(
-                json.toJSONString(), "HmacMD5", this.secretKey)).toLowerCase();
+                oriStr, "HmacMD5", this.secretKey)).toLowerCase();
     }
 
     private boolean isArrMsg(String text) {

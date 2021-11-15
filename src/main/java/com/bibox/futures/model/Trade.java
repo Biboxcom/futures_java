@@ -22,6 +22,7 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bibox.futures.model.enums.TradeSide;
 import lombok.AccessLevel;
@@ -62,4 +63,25 @@ public class Trade {
         return a;
     }
 
+    public static Trade parseEvent(JSONArray obj) {
+        Trade a = new Trade();
+        a.setSymbol(obj.getString(0));
+        Integer side = obj.getInteger(3);
+        a.setSide(TradeSide.fromSide(side));
+        a.setPrice(obj.getBigDecimal(1));
+        a.setQuantity(obj.getBigDecimal(2));
+        a.setTime(obj.getLong(4));
+        return a;
+    }
+
+    public static Trade parseEvent(JSONArray obj, String pair) {
+        Trade a = new Trade();
+        a.setSymbol(pair);
+        Integer side = obj.getInteger(2);
+        a.setSide(TradeSide.fromSide(side));
+        a.setPrice(obj.getBigDecimal(0));
+        a.setQuantity(obj.getBigDecimal(2));
+        a.setTime(obj.getLong(3));
+        return a;
+    }
 }

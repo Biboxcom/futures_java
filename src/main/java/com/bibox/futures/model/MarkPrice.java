@@ -22,6 +22,7 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -57,6 +58,16 @@ public class MarkPrice {
         a.setClose(obj.getBigDecimal("close"));
         a.setHigh(obj.getBigDecimal("high"));
         a.setLow(obj.getBigDecimal("low"));
+        return a;
+    }
+
+    public static MarkPrice parseResult(JSONArray item) {
+        MarkPrice a = new MarkPrice();
+        a.setTime(item.getLong(0));
+        a.setOpen(item.getBigDecimal(1));
+        a.setHigh(item.getBigDecimal(2));
+        a.setLow(item.getBigDecimal(3));
+        a.setClose(item.getBigDecimal(4));
         return a;
     }
 

@@ -45,7 +45,7 @@ class CandlestickSubscription extends Subscription<List<Candlestick>> {
     }
 
     static String buildChannelName(String symbol, TimeInterval timeInterval) {
-        return String.format("bibox_sub_spot_%s_kline_%s",
+        return String.format("%s_kline_%s",
                 SymbolConverter.convert(symbol),
                 timeInterval.getValue());
     }
@@ -57,7 +57,7 @@ class CandlestickSubscription extends Subscription<List<Candlestick>> {
 
     @Override
     public List<Candlestick> decode(JSONObject json) {
-        return JSONUtils.parseCandlesticks(json.getJSONArray("data"));
+        return JSONUtils.parseCandlesticksNew(json.getJSONArray("d"));
     }
 
     @Override
@@ -75,10 +75,7 @@ class CandlestickSubscription extends Subscription<List<Candlestick>> {
     @Override
     public String toString() {
         JSONObject json = new JSONObject();
-        json.put("event", "addChannel");
-        json.put("channel", getChannel());
-        json.put("binary", 0);
-        json.put("ver", 8);
+        json.put("sub", getChannel());
         return json.toJSONString();
     }
 

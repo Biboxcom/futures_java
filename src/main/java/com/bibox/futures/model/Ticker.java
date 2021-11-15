@@ -22,6 +22,7 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -92,4 +93,21 @@ public class Ticker {
         return a;
     }
 
+    public static Ticker parseEvent(JSONArray obj) {
+        Ticker a = new Ticker();
+        a.setSymbol(obj.getString(0));
+        a.setChange(obj.getString(11));
+        a.setTime(obj.getLong(12));
+        a.setVolume(obj.getBigDecimal(10));
+        a.setPrice(obj.getBigDecimal(1));
+        a.setPriceInCNY(obj.getBigDecimal(3));
+        a.setPriceInUSD(obj.getBigDecimal(2));
+        a.setHigh(obj.getBigDecimal(4));
+        a.setLow(obj.getBigDecimal(5));
+        a.setBestAskPrice(obj.getBigDecimal(8));
+        a.setBestAskQty(obj.getBigDecimal(9));
+        a.setBestBidPrice(obj.getBigDecimal(6));
+        a.setBestBidQty(obj.getBigDecimal(7));
+        return a;
+    }
 }

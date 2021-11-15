@@ -27,7 +27,7 @@ import com.bibox.util.Listener;
 
 abstract class PrivateSubscription<T> extends Subscription<T> {
 
-    static final String CHANNEL_PREFIX = "bibox_sub_spot_ALL_ALL_login";
+    static final String CHANNEL_PREFIX = "ALL_ALL_login";
 
     PrivateSubscription(BiboxFuturesClient client, Listener<T> listener) {
         super(client, listener);
@@ -51,8 +51,7 @@ abstract class PrivateSubscription<T> extends Subscription<T> {
     public String toString() {
         JSONObject json = new JSONObject();
         json.put("apikey", client.getApiKey());
-        json.put("channel", CHANNEL_PREFIX);
-        json.put("event", "addChannel");
+        json.put("sub", CHANNEL_PREFIX);
         json.put("sign", client.buildSignature());
         return json.toJSONString();
     }

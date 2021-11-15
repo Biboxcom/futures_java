@@ -23,6 +23,7 @@
 package com.bibox.futures;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bibox.futures.model.Trade;
 import com.bibox.util.Listener;
@@ -43,7 +44,7 @@ class TradeSubscription extends Subscription<List<Trade>> {
     }
 
     static String buildChannelName(String symbol) {
-        return String.format("bibox_sub_spot_%s_deals", SymbolConverter.convert(symbol));
+        return String.format("%s_deals", SymbolConverter.convert(symbol));
     }
 
     @Override
@@ -53,8 +54,14 @@ class TradeSubscription extends Subscription<List<Trade>> {
 
     @Override
     public List<Trade> decode(JSONObject json) {
-        String data = ZipUtils.unzip(json.getBytes("data"));
-        return JSONUtils.parseTradeEvent(Objects.requireNonNull(JSON.parseArray(data)));
+        boolean isAdd = isAddData(json);
+        if (!isAdd) {
+            JSONObject data = json.getJSONObject("d");
+            JSONArray jsonArray = data.getJSONArray("d");
+            JSONArray last = jsonArray.getJSONArray(0);
+            return JSONUtils.parseTradeEventNew(last,data.getString("pair"));
+        }
+        return JSONUtils.parseTradeEventNew(json.getJSONArray("d"));
     }
 
     @Override
@@ -72,10 +79,13 @@ class TradeSubscription extends Subscription<List<Trade>> {
     @Override
     public String toString() {
         JSONObject json = new JSONObject();
-        json.put("event", "addChannel");
-        json.put("channel", getChannel());
-        json.put("binary", 0);
+        json.put("sub", getChannel());
         return json.toJSONString();
+    }
+
+    private boolean isAddData(JSONObject json) {
+        Integer t = json.getInteger("t");
+        return t != null && t == 1;
     }
 
 }

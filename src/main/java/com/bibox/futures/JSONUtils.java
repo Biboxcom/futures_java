@@ -300,4 +300,36 @@ class JSONUtils {
         return PositionUpdate.parseEvent(obj);
     }
 
+    public static List<Candlestick> parseCandlesticksNew(JSONArray arr) {
+        List<Candlestick> list = new ArrayList<>();
+        if (arr.size()>1) {
+            list.add(Candlestick.parseResult(arr.getJSONArray(1)));
+        }
+        return list;
+    }
+
+    public static Ticker parseTickerEventNew(JSONArray obj) {
+        return Ticker.parseEvent(obj);
+    }
+
+    public static List<Trade> parseTradeEventNew(JSONArray arr) {
+        List<Trade> list = new ArrayList<>();
+        list.add(Trade.parseEvent(arr));
+        return list;
+    }
+
+    public static List<Trade> parseTradeEventNew(JSONArray arr, String pair) {
+        List<Trade> list = new ArrayList<>();
+        list.add(Trade.parseEvent(arr,pair));
+        return list;
+    }
+
+    public static List<MarkPrice> parseMarketPriceNew(JSONArray arr) {
+        List<MarkPrice> list = new ArrayList<>();
+        if (arr.size()>1) {
+            list.add(MarkPrice.parseResult(arr.getJSONArray(1)));
+        }
+        return list;
+    }
+
 }

@@ -37,7 +37,7 @@ class TickerSubscription extends Subscription<Ticker> {
     }
 
     static String buildChannelName(String symbol) {
-        return String.format("bibox_sub_spot_%s_ticker",
+        return String.format("%s_ticker",
                 SymbolConverter.convert(symbol));
     }
 
@@ -48,7 +48,7 @@ class TickerSubscription extends Subscription<Ticker> {
 
     @Override
     public Ticker decode(JSONObject json) {
-        return JSONUtils.parseTickerEvent(json.getJSONObject("data"));
+        return JSONUtils.parseTickerEventNew(json.getJSONArray("d"));
     }
 
     @Override
@@ -64,9 +64,7 @@ class TickerSubscription extends Subscription<Ticker> {
     @Override
     public String toString() {
         JSONObject json = new JSONObject();
-        json.put("event", "addChannel");
-        json.put("channel", getChannel());
-        json.put("binary", 0);
+        json.put("sub", getChannel());
         return json.toJSONString();
     }
 

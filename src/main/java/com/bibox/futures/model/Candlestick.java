@@ -22,6 +22,7 @@
 
 package com.bibox.futures.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -61,6 +62,17 @@ public class Candlestick {
         a.setHigh(obj.getBigDecimal("high"));
         a.setLow(obj.getBigDecimal("low"));
         a.setVolume(obj.getBigDecimal("vol"));
+        return a;
+    }
+
+    public static Candlestick parseResult(JSONArray item) {
+        Candlestick a = new Candlestick();
+        a.setTime(item.getLong(0));
+        a.setOpen(item.getBigDecimal(1));
+        a.setHigh(item.getBigDecimal(2));
+        a.setLow(item.getBigDecimal(3));
+        a.setClose(item.getBigDecimal(4));
+        a.setVolume(item.getBigDecimal(5));
         return a;
     }
 
