@@ -29,7 +29,9 @@ import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class UncompressUtils {
 
     public static String decodeBytes(byte[] array) {
@@ -41,6 +43,11 @@ public class UncompressUtils {
             message = new String(array, offset, length, Charset.defaultCharset());
         } else if (zipFlag == 1) {
             message = UncompressUtils.uncompress(array, offset, length);
+        }else {
+            String unknow = new String(array, 0, length, Charset.defaultCharset());
+            if (unknow.contains("error")) {
+                log.error(unknow);
+            }
         }
         return message;
     }
