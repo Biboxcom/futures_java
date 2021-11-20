@@ -288,6 +288,7 @@ abstract class BiboxFuturesClientBase {
                 for (PrivateSubscription sub : privateSubscriptions.values()) {
                     if (data.containsKey(sub.getDataName())) {
                         sub.onMessage(data);
+                        return;
                     }
                 }
                 return;
