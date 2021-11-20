@@ -80,7 +80,7 @@ public class Trade {
         Integer side = obj.getInteger(2);
         a.setSide(TradeSide.fromSide(side));
         a.setPrice(obj.getBigDecimal(0));
-        a.setQuantity(obj.getBigDecimal(2));
+        a.setQuantity(obj.getBigDecimal(1));
         a.setTime(obj.getLong(3));
         return a;
     }
